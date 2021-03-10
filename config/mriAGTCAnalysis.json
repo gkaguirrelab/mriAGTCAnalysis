@@ -1,0 +1,28 @@
+[
+	{
+		"flavor": "",
+		"hook": "",
+		"importance": "",
+		"localHookTemplate": "",
+		"name": "flywheelMRSupport",
+		"pathPlacement": "append",
+		"subfolder": "",
+		"toolboxRoot": "",
+		"type": "include",
+		"update": "",
+		"url": ""
+	},
+        {
+		"flavor": "",
+		"hook": "",
+		"importance": "",
+		"localHookTemplate": "config/mriAGTCAnalysisLocalHookTemplate.m",
+		"name": "mriAGTCAnalysis",
+		"pathPlacement": "append",
+		"subfolder": "code",
+		"toolboxRoot": "",
+		"type": "git",
+		"update": "",
+		"url": "https://github.com/gkaguirrelab/mriAGTCAnalysis.git"
+	}	
+]

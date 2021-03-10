@@ -1,0 +1,13 @@
+projectLabel,tome,gearName,hcp-func,rootSession,fMRITimeSeries,ConfigKeys,"{'Subject','RegName','fMRIName','BiasCorrection'}",ConfigVals,"{subjectName,'FS',analysisSubmissionTag,'SEBased'}",
+Inputs,FreeSurferLicense,GradientCoeff,SpinEchoNegative,SpinEchoPositive,StructZip,fMRIScout,fMRITimeSeries,,,
+DefaultLabel,,,fmap_dir-AP_acq-SpinEchoFieldMap,fmap_dir-PA_acq-SpinEchoFieldMap,hcp-struct/hcpstruct.zip,,,,,
+FileSuffix,txt,grad,nifti,nifti,zip,nifti,nifti,,,
+ContainerType,project,project,acquisition,acquisition,analysis,acquisition,acquisition,,,
+ExactStringMatch,0,0,0,0,0,0,0,,,Notes
+,,,,,,,,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-prf_acq-AP_run-01_SBRef,HERO_gka1/Session 1/func_task-prf_acq-AP_run-01,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-prf_acq-PA_run-02_SBRef,HERO_gka1/Session 1/func_task-prf_acq-PA_run-02,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-prf_acq-AP_run-03_SBRef,HERO_gka1/Session 1/func_task-prf_acq-AP_run-03,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-prf_acq-PA_run-04_SBRef,HERO_gka1/Session 1/func_task-prf_acq-PA_run-04,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-ventralLocalizerA_acq-AP_run01_SBRef,HERO_gka1/Session 1/func_task-ventralLocalizerA_acq-AP_run01,,,
+HERO_gka1,freesurfer_license.txt,coeff.grad,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye,HERO_gka1/Pilot Left Eye/func_task-ventralLocalizerB_acq-PA_run01_SBRef,HERO_gka1/Session 1/func_task-ventralLocalizerB_acq-PA_run01,,,
