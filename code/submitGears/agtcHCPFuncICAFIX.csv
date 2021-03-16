@@ -1,0 +1,8 @@
+projectLabel,AGTC,gearName,hcp-icafix,rootSession,FuncZip,ConfigKeys,"{'Subject','RegName','FIXClassifier','HighPassFilter','PreserveOnError'}",ConfigVals,"{subjectName,'FS','HCP_hp2000',2000,true}"
+Inputs,StructZip,FuncZip,FuncZip2,FuncZip3,FuncZip4,analysisSubmissionTag,,,
+DefaultLabel,hcp-struct/hcpstruct.zip,,,,,,,,
+FileSuffix,zip,zip,zip,zip,zip,,,,
+ContainerType,analysis,analysis,analysis,analysis,analysis,,,,
+ExactStringMatch,0,0,0,0,0,,Notes,,
+,,,,,,,,,
+HEROgka1,HEROgka1/PilotLeftEye,TOME_3001/Session 1/hcp-func/TOME_3001_rfMRI_REST_AP_Run1_hcpfunc.zip,TOME_3001/Session 1/hcp-func/TOME_3001_rfMRI_REST_PA_Run2_hcpfunc.zip,TOME_3001/Session 1/hcp-func/TOME_3001_rfMRI_REST_AP_Run3_hcpfunc.zip,TOME_3001/Session 1/hcp-func/TOME_3001_rfMRI_REST_PA_Run4_hcpfunc.zip,TOME_3001_rfMRI_REST,,,
