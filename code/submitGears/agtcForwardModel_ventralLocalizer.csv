@@ -1,0 +1,8 @@
+projectLabel,AGTC,gearName,forwardModel,rootSession,funcZip01,ConfigKeys,"{'averageAcquisitions','dataFileType','dataSourceType','modelClass','modelOpts','tr'}",ConfigVals,"{'0','cifti','icafix','eventGain',modelOpts,'0.8'}"
+Inputs,structZip,funcZip01,stimFile,maskFile,modelOpts,analysisSubmissionTag,,,
+DefaultLabel,,,,,,,,,
+FileSuffix,zip,zip,mat,nii,,,,,
+ContainerType,analysis,analysis,project,project,config,,,,
+ExactStringMatch,0,0,0,,,,Notes,,
+,,,,,,,,,
+HEROgka1,HEROgka1/PilotLeftEye/hcp-struct/HEROgka1_hcpstruct.zip,HEROgka1/PilotLeftEye/hcp-icafix/HEROgka1_ICAFIX_multi_ventLocalizerA_AP_run1_ventLocalizerB_PA_run1_hcpicafix.zip,ventraLocalizerStimulusAB.mat,,"'(polyDeg),13,(stimLabels),{(color),(face),(gray),(house),(red)}'",HEROgka1_ventralLocalizer,,,
