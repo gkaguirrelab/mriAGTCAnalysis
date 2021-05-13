@@ -8,16 +8,16 @@ Do not forget to set variables below to find the videos
 # Set some variables
 subject_id = 'MEE2208'
 recording_date = '2021-05-12'
-session_name = 'Session2Left'
-flywheel_session_name = 'Hadassah_LeftEyeStim'
-workdir = 'C:\\Users\\ozenc\\Desktop\\porkdir'
+session_name = 'Session1Right'
+flywheel_session_name = 'Hadassah_RightEyeStim'
+workdir = '/Users/iron/Desktop/work'
 
 # Make the workdir in case a folder is specified 
 if not os.path.exists(workdir):
-    os.system('mkdir %s' % workdir)
+    os.system('mkdir -p %s' % workdir)
 
 # Initialize Flywheel 
-fw = flywheel.Client()
+fw = flywheel.Client('upenn.flywheel.io:8P7zdNhXBWiahwEGKt')
 
 # Get flywheel subject, session
 proj = fw.projects.find_first('label=AGTC')
