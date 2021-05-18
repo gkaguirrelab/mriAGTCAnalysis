@@ -9,9 +9,13 @@ subjects = proj.subjects()
 analyses = fw.get_analyses('projects', proj.id, 'sessions')
 struct = [ana for ana in analyses if ana.label.startswith('hcp-struct')]
 func = [ana for ana in analyses if ana.label.startswith('hcp-func')]
+fix = [ana for ana in analyses if ana.label.startswith('hcp-icafix')]
 sessions_that_have_func = []
 for f in func:
     sessions_that_have_func.append(f.parent.id)
+sessions_that_have_fix = []
+for fi in fix:
+    sessions_that_have_fix.append(fi.parent.id)
 qp = fw.lookup('gears/hcp-icafix/0.2.0')
 analysis_label = 'hcp-icafix %s' % qp.gear.version
 
@@ -22,7 +26,7 @@ for subject in subjects:
     if subject_id != 'HEROgka1':
         sessions = subject.sessions()
         for session in sessions:
-            if session.id in sessions_that_have_func:
+            if session.id in sessions_that_have_func and session.id not in sessions_that_have_fix:
                 for f in func:
                     if subject.id == f.parents.subject and 'pRF_AP_run1' in f.label:
                         prf_run1 = f
