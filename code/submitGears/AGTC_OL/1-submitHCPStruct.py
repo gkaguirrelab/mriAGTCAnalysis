@@ -3,8 +3,8 @@ import datetime
 
 # Initialize gear stuff
 now = datetime.datetime.now().strftime("%y/%m/%d_%H:%M")
-fw = flywheel.Client()
-proj = fw.projects.find_first('label=AGTC')
+fw = flywheel.Client('upenn.flywheel.io:DTIiZcuXBVlpJmCLZt')
+proj = fw.projects.find_first('label=AGTC_OL')
 subjects = proj.subjects()
 analyses = fw.get_analyses('projects', proj.id, 'sessions')
 struct = [ana for ana in analyses if ana.label.startswith('hcp-struct')]

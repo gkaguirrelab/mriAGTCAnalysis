@@ -3,7 +3,7 @@ import datetime
 
 # Initialize gear stuff
 now = datetime.datetime.now().strftime("%y/%m/%d_%H:%M")
-fw = flywheel.Client()
+fw = flywheel.Client('upenn.flywheel.io:DTIiZcuXBVlpJmCLZt')
 proj = fw.projects.find_first('label=AGTC')
 subjects = proj.subjects()
 analyses = fw.get_analyses('projects', proj.id, 'sessions')
