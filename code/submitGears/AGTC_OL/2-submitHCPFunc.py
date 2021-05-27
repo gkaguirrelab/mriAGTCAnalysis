@@ -30,7 +30,6 @@ for subject in subjects:
                         struct_gear = st
                         struct_result = struct_gear.get_file(subject_id + '_hcpstruct.zip')
                 
-                print(session.label)
                 acquisition_list=[]
                 acquisitions = session.acquisitions()
                 for acquisition in acquisitions:
@@ -50,10 +49,10 @@ for subject in subjects:
                           'RegName': 'FS', 'Subject': subject_id}
                     
                 for acquisition in acquisitions:
-                    if 'func_task' in acquisition.label:
+                    if 'func_task' in acquisition.label and 'SBRef' not in acquisition.label and 'PhysioLog' not in acquisition.label:
                         acq = acquisition 
                         label = acquisition.label
-                        for i in acq:
+                        for i in acq.files:
                             if 'nii.gz' in i.name:
                                 acquisition_to_run = i 
                         for ref in acquisitions:
@@ -62,7 +61,7 @@ for subject in subjects:
                         inputs['fMRIScout'] = scout 
                         inputs['fMRITimeSeries'] = acquisition_to_run
                         config['fMRIName'] = label[10:]                   
-                        new_analysis_label = analysis_label + ' ' + label[10:] + ' ' + now
+                        new_analysis_label = analysis_label + ' ' + '[' + label[10:] + ']' + ' ' + now
                         _id = qp.run(analysis_label=new_analysis_label, config=config, 
                         inputs=inputs, destination=session)
     
