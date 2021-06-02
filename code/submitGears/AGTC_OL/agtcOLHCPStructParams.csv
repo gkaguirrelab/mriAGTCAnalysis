@@ -1,0 +1,9 @@
+projectLabel,AGTC_OL,gearName,hcp-struct,versionNum,0.1.8,rootSession,T1,ConfigKeys,"{'Subject','RegName','StructuralUnwarpDirection'}",ConfigVals,"{subjectName,'FS','z'}"
+Inputs,FreeSurferLicense,T1,T2,,,,,,,,
+DefaultLabel,,anat_T1w_acq-axial,anat_T2w_acq-spc,,,,,,,,
+FileSuffix,txt,nifti,nifti,,,,,,,,
+ContainerType,project,acquisition,acquisition,,,,,,,,
+ExactStringMatch,0,0,0,,notes,,,,,,
+,,,,,,,,,,,
+HERO_GKA1,freesurfer_license.txt,HERO_GKA1/mesopic-OneLight-RightEyeStim-1/anat-T1w_acq-axial,HERO_GKA1/mesopic-OneLight-RightEyeStim-1/anat-T2w_acq-spc,,,,,,,,
+MELA_5001,freesurfer_license.txt,MELA_5001/mesopic-OneLight-LeftEyeStim-2/anat-T1w_acq-axial,MELA_5001/mesopic-OneLight-LeftEyeStim-2/anat-T2w_acq-spc,,,,,,,,
