@@ -54,15 +54,11 @@ end
 [~, userID] = system('whoami');
 userID = strtrim(userID);
 switch userID
-    case {'harrisonmcadams'}
-        AGTC_dataBasePath = ['/Users/' userID '/Dropbox-Aguirre-Brainard-Lab/AGTC_data/'];
-        AGTC_analysisBasePath = ['/Users/' userID '/Dropbox-Aguirre-Brainard-Lab/MELA_analysis/'];
-        AGTC_processingBasePath = ['/Users/' userID '/Dropbox (Aguirre-Brainard Lab)/AGTC_processing/'];
         
     otherwise
-        AGTC_dataBasePath = fullfile(dropboxDir,'AGTC_data');
-        AGTC_analysisBasePath = fullfile(dropboxDir,'AGTC_analysis');
-        AGTC_processingBasePath = fullfile(dropboxDir,'AGTC_processing');
+        MELA_dataBasePath = fullfile(dropboxDir,'MELA_data');
+        MELA_analysisBasePath = fullfile(dropboxDir,'MELA_analysis');
+        MELA_processingBasePath = fullfile(dropboxDir,'MELA_processing');
         
 end
 
@@ -72,17 +68,17 @@ if ismac
     % Code to run on Mac plaform
     setpref(projectName,'analysisScratchDir','/tmp/flywheel');
     setpref(projectName,'projectRootDir',fullfile('/Users/',userID,'/Documents/flywheel',projectName));
-    setpref(projectName,'AGTCDataPath', AGTC_dataBasePath);
-    setpref(projectName, 'AGTCAnalysisPath', AGTC_analysisBasePath);
-    setpref(projectName, 'AGTCProcessingPath', AGTC_processingBasePath);
+    setpref(projectName,'dataPath', MELA_dataBasePath);
+    setpref(projectName, 'analysisPath', MELA_analysisBasePath);
+    setpref(projectName, 'processingPath', MELA_processingBasePath);
     
 elseif isunix
     % Code to run on Linux plaform
     setpref(projectName,'analysisScratchDir','/tmp/flywheel');
     setpref(projectName,'projectRootDir',fullfile('/home/',userID,'/Documents/flywheel',projectName));
-    setpref(projectName,'AGTCDataPath', AGTC_dataBasePath);
-    setpref(projectName, 'AGTCAnalysisPath', AGTC_analysisBasePath);
-    setpref(projectName, 'AGTCProcessingPath', AGTC_processingBasePath);
+    setpref(projectName,'dataPath', MELA_dataBasePath);
+    setpref(projectName, 'analysisPath', MELA_analysisBasePath);
+    setpref(projectName, 'processingPath', MELA_processingBasePath);
     
 elseif ispc
     % Code to run on Windows platform
