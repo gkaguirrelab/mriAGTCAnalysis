@@ -1,5 +1,7 @@
 projectName = 'mriAGTCAnalysis';
 
+clear protocolParams responseStruct block responseTypes stimulusFull stimTimeFull performanceFull
+    
 dataPath =    getpref(projectName,'dataPath');
 analysisPath =   getpref(projectName, 'analysisPath');
 projectDataDir = fullfile(dataPath,'Experiments','OLApproach_TrialSequenceMR','MRAGTC','DataFiles');
@@ -10,7 +12,6 @@ matFileList = dir(fullfile(selpath,'*.mat'));
 for ii = 1:length(matFileList)
     
     % Assemble the file name. This is to enfoce the loading order
-    fileName = sprintf('AGTC_session_%d
     load(fullfile(selpath,matFileList(ii).name),'protocolParams','responseStruct','block');
 
     trialOrder = protocolParams.trialTypeOrder(2,:);    
@@ -57,9 +58,14 @@ for ii = 1:length(matFileList)
         end
     end
     
-    stimulus{ii}=stimMat;
-    stimTime{ii}=temporalSupport;
-    performance{ii}=responseTypes;
+    stimulusFull{ii}=stimMat;
+    stimTimeFull{ii}=temporalSupport;
+    performanceFull{ii}=responseTypes;
     
-    clear protocolParams responseStruct block
+    clear protocolParams responseStruct block responseTypes
 end
+
+
+% Summarize performance
+scores = sum(cell2mat(cellfun(@(x) sum(x,2),performanceFull,'UniformOutput',false)),2);
+fprintf('hits: %d, miss: %d, false alarm: %d, cr: %d \n',scores);
