@@ -1,4 +1,4 @@
-projectLabel,AGTC_OL,gearName,forwardModel,rootSession,funcZip01,ConfigKeys,"{'averageAcquisitions','averageVoxels','pseudoHemiAnalysis','dataFileType','dataSourceType','modelClass','modelOpts','tr'}",ConfigVals,"{'0','0','0','cifti','icafix','eventGain',modelOpts,'0.8'}",
+projectLabel,AGTC_OL,gearName,forwardModel,rootSession,funcZip01,ConfigKeys,"{'averageAcquisitions','averageVoxels','pseudoHemiAnalysis','convertToPercentChange','dataFileType','dataSourceType','modelClass','modelOpts','tr'}",ConfigVals,"{'0','0','0','1','cifti','icafix','eventGain',modelOpts,'0.8'}",
 Inputs,structZip,funcZip01,funcZip02,funcZip03,funcZip04,stimFile,maskFile,modelOpts,analysisSubmissionTag,
 DefaultLabel,hcp-struct/hcpstruct.zip,,,,,,,,,
 FileSuffix,zip,zip,zip,zip,zip,mat,nii,,,
