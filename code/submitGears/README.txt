@@ -1,6 +1,10 @@
 To submit these jobs to Flywheel, use the function submitGears that is included in the flywheelMRSupport toolbox. The syntax is:
 
-	submitGears('tomeHCPFuncICAFIX_Session1.csv')
+	submitGears('tomeHCPStructParams.csv')
+
+NOTE: The ICAFix analyses must be submitted using the high memory virtual machine:
+
+	submitGears('agtcOLHCPFuncICAFIX.csv','tags',{'vm-n1-highmem-8_disk-1500G_swap-60G'})
 
 The order of execution for these should be:
 
