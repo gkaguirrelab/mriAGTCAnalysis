@@ -1,6 +1,6 @@
 projectName = 'mriAGTCAnalysis';
 
-clear protocolParams responseStruct block responseTypes stimulusFull stimTimeFull performanceFull
+clear protocolParams responseStruct block responseTypes stimulus stimTime performance
     
 dataPath =    getpref(projectName,'dataPath');
 analysisPath =   getpref(projectName, 'analysisPath');
@@ -58,14 +58,14 @@ for ii = 1:length(matFileList)
         end
     end
     
-    stimulusFull{ii}=stimMat;
-    stimTimeFull{ii}=temporalSupport;
-    performanceFull{ii}=responseTypes;
+    stimulus{ii}=stimMat;
+    stimTime{ii}=temporalSupport;
+    performance{ii}=responseTypes;
     
     clear protocolParams responseStruct block responseTypes
 end
 
 
 % Summarize performance
-scores = sum(cell2mat(cellfun(@(x) sum(x,2),performanceFull,'UniformOutput',false)),2);
+scores = sum(cell2mat(cellfun(@(x) sum(x,2),performance,'UniformOutput',false)),2);
 fprintf('hits: %d, miss: %d, false alarm: %d, cr: %d \n',scores);
