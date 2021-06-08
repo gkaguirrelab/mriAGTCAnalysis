@@ -16,7 +16,7 @@
 
 % Save location for the maps
 subjectNames = {'MELA_5001','MELA_5001','HERO_GKA1'};
-analysisIDs = { '60beb7e1e5f2b4edbd2a869c','60beb7e592649545bd3d06ce','60beb7de4d71882ea9a25609' };
+analysisIDs = {'60bf58d10225b31ff498256c','60bf58d79f682035099824d6','60bf58cd9f682035099824d4' };
 analysisLabels = {'LeftEyeStim','RightEyeStim','RightEyeStim'};
 retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380' };
 retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
