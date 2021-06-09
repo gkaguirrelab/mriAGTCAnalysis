@@ -110,85 +110,27 @@ for ss = 1: length(subjectNames)
         outData.diminfo{1,2}.length = 1;
         cifti_write(outData, outCIFTIFile)
     end
+
+    % The vertices to plot
+    goodIdx = logical((results.R2 > 0.05).*(eccenMap>0.05).*(vArea==1));
+
+    % Left and right hemisphere
+    polarMap(32492:end)=-polarMap(32492:end);
     
-    % generate visual field maps
-    %makeVisualFieldMap(results,eccenMap,polarMap,vArea,sigmaMap);
+    % generate visual field map
+    figHandle = figure( 'Position',  [100, 100, 800, 300],'PaperOrientation','landscape');
+    plotSet = [1 2 4];
+    for ff = 1:length(plotSet)
+        subplot(1,3,ff);
+        createFieldMap(results.(saveFieldNames{plotSet(ff)})(goodIdx),polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),[-1 1]);
+        title(saveFieldNames{plotSet(ff)},'Interpreter', 'none');
+    end
+    sgtitle([subjectNames{ss} '_' analysisLabels{ss}],'Interpreter', 'none');
+    outFigureFile = fullfile(resultsSaveDir, [subjectNames{ss} '_' analysisLabels{ss} '_FieldMap.pdf']);
+    print(figHandle,outFigureFile,'-dpdf','-fillpage');
+    close(figHandle);
+    
 end
 
 
-
-
-function figHandle = makeVisualFieldMap(results,eccenMap,polarMap,vArea,sigmaMap)
-
-
-%figHandle = figure('visible','on');
-%set(figHandle,'PaperOrientation','landscape');
-%set(figHandle,'PaperUnits','normalized');
-%set(gcf,'Units','points','Position',[100 100 400 400]);
-
-% Identify the vertices with fits above the threshold
-goodIdx = logical((results.LMS_zVal > 2).*(eccenMap>0.05).*(vArea==1));
-
-% Left and right hemisphere
-polarMap(32492:end)=-polarMap(32492:end);
-
-% % Map R2 value to a red-green plot symbol color
-nColors = 200;
-[mycolormap] = make_colormap(nColors);
-
-valMin = -0.5;
-valMax = 0.5;
-val = results.LMS(goodIdx) - results.baseline(goodIdx);
-ind = floor((nColors-1).* (val-valMin)./(valMax-valMin))+1;
-
-% valMin = 0;
-% valMax = 10;
-% val = resultsDoE.fitPeakAmpDoE(goodIdx) ./ abs(resultsDoE.fitOffset(goodIdx));
-% ind = floor((nColors-1).* (val-valMin)./(valMax-valMin))+1;
-
-ind(ind>nColors)=nColors;
-ind(ind<1)=1;
-colorTriple = mycolormap(ind,:);
-
-
-markSize = sigmaMap(goodIdx).*100;
-markSize(markSize==0) = 25;
-
-% The polar angle map has the dorsal V1 border at +180, and the ventral V1
-% border at 0. By adding 90 degrees to the polar angle, this places the
-% dorsal V1 border at 270, which on the matlab polar scatter corresponds to
-% the 6 o'clock position on the plot. Therefore, the polarscatter plot is
-% in visual field coordinates(i.e., 6 o'clock represents the inferior
-% vertical meridian of the visual field).
-%h = polarscatter(deg2rad(polarMap(goodIdx)+90),eccenMap(goodIdx),markSize, ...
-%    colorTriple,'filled','o','MarkerFaceAlpha',1/8);
-
-%rlim([0 60])
-%
-fieldMap = createFieldMap(val,polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx));
-% fieldMap = createFieldMap(resultsFit.fitPeakAmp(goodIdx),polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx));
-
-% subplot(2,1,1)
-% plot(eccenMap(goodIdx),resultsFit.fitPeakAmp(goodIdx),'.r');
-% ylim([0 50]);
-% xlim([0 80]);
-% subplot(2,1,2)
-% plot(eccenMap(goodIdx),resultsFit.fitPeakFreq(goodIdx),'.r');
-% ylim([0 64]);
-% xlim([0 80]);
-
-end
-
-function [mycolormap] = make_colormap(mapres)
-
-
-
-%% Create colormap
-mycolormap = zeros(mapres,3);
-mycolormap(:,1)=1;
-
-% red to yellow
-mycolormap(:,2) = linspace(0,1,mapres);
-
-end
 
