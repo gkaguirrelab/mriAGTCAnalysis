@@ -14,6 +14,7 @@ sessions_that_have_struct = []
 for s in struct:
     sessions_that_have_struct.append(s.parent.id)
 freesurfer_license = proj.get_file('freesurfer_license.txt')
+coeff = proj.get_file('coeff.grad')
 config = {'RegName': 'FS',
           'Subject': 'NA'}
 
@@ -40,7 +41,7 @@ for subject in subjects:
                         if 'nii.gz' in file.name:
                             T2_image = file
             config['Subject'] = subject.label
-            inputs = {'FreeSurferLicense': freesurfer_license, 'T1': T1_image, 'T2': T2_image}
+            inputs = {'FreeSurferLicense': freesurfer_license, 'T1': T1_image, 'T2': T2_image, 'GradientCoeff': coeff}
             print('submitting HCP-struct for AGTC subjects')
             try:
                 _id = qp.run(analysis_label=analysis_label,
