@@ -6,8 +6,8 @@ Do not forget to set variables below to find the videos
 ''' 
 
 # Set some variables
-subject_id = 'MEE2208'
-recording_date = '2021-05-12'
+subject_id = 'DUK8002'
+recording_date = '2021-06-02'
 session_name = 'Session1Right'
 flywheel_session_name = 'Hadassah_RightEyeStim'
 workdir = '/Users/iron/Desktop/work'
@@ -50,7 +50,7 @@ else:
 video_path = os.path.join(folder_path,subject_id,recording_date,session_name)
 workdir_video_path = os.path.join(workdir,subject_id,recording_date,session_name)
 if not os.path.exists(workdir_video_path):
-    os.system('mkdir {workdir_video_path}'.format(workdir_video_path=workdir_video_path))
+    os.system('mkdir -p {workdir_video_path}'.format(workdir_video_path=workdir_video_path))
 
 # Loop through each image, get the name, increase the brightness and upload to Flywheel 
 for vid_name in os.listdir(video_path):
