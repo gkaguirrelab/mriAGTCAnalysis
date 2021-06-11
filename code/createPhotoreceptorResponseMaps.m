@@ -15,11 +15,11 @@
 
 
 % Save location for the maps
-subjectNames = {'MELA_5001','MELA_5001','HERO_GKA1'};
-analysisIDs = {'60bf58d10225b31ff498256c','60bf58d79f682035099824d6','60bf58cd9f682035099824d4' };
-analysisLabels = {'LeftEyeStim','RightEyeStim','RightEyeStim'};
-retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380' };
-retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
+subjectNames = {'MELA_5001','MELA_5001','MELA_5002','MELA_5002','HERO_GKA1'};
+analysisIDs = {'60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3','60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6','60c23c1681ba4f28a42a88a8' };
+analysisLabels = {'RightEyeStim','LeftEyeStim','RightEyeStim','LeftEyeStim','RightEyeStim'};
+retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380' };
+retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
 fieldNameBaseline = 'baseline';
 fieldNames = {'LminusM','LMS','S','omni','baseline','attention'};
 
@@ -40,7 +40,7 @@ fw = flywheel.Flywheel(getpref('forwardModelWrapper','flywheelAPIKey'));
 for ss = 1: length(subjectNames)
     
     % Set up the paths for this subject
-    fileStem = [subjectNames{ss} '_eventGain_'];
+    fileStem = [subjectNames{ss} '_agtcOL_'];
     resultsSaveDir = ['/Users/aguirre/Desktop/' subjectNames{ss}];
     mkdir(resultsSaveDir);
     
@@ -119,9 +119,9 @@ for ss = 1: length(subjectNames)
     
     % generate visual field map
     figHandle = figure( 'Position',  [100, 100, 800, 300],'PaperOrientation','landscape');
-    plotSet = [1 2 4];
+    plotSet = [1 2 3 4];
     for ff = 1:length(plotSet)
-        subplot(1,3,ff);
+        subplot(1,length(plotSet),ff);
         createFieldMap(results.(saveFieldNames{plotSet(ff)})(goodIdx),polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),[-1 1]);
         title(saveFieldNames{plotSet(ff)},'Interpreter', 'none');
     end
