@@ -15,11 +15,11 @@
 
 
 % Save location for the maps
-subjectNames = {'MELA_5001','MELA_5001','MELA_5002','MELA_5002','HERO_GKA1'};
-analysisIDs = {'60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3','60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6','60c23c1681ba4f28a42a88a8' };
-analysisLabels = {'RightEyeStim','LeftEyeStim','RightEyeStim','LeftEyeStim','RightEyeStim'};
-retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380' };
-retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
+subjectNames = {'MELA_5001','MELA_5001','MELA_5002','MELA_5002','MELA_5005','HERO_GKA1'};
+analysisIDs = {'60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3','60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6','60db6cf8c1b37b22ee2b6dc9','60c23c1681ba4f28a42a88a8' };
+analysisLabels = {'RightEyeStim','LeftEyeStim','RightEyeStim','LeftEyeStim','LeftEyeStim','RightEyeStim'};
+retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380'  };
+retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
 fieldNameBaseline = 'baseline';
 fieldNames = {'LminusM','LMS','S','omni','baseline','attention'};
 

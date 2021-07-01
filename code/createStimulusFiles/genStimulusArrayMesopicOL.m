@@ -1,3 +1,7 @@
+%{
+save('/Users/aguirre/Desktop/MELA_5006_LeftEyeStim_stim.mat','stimulus','stimTime')
+%}
+
 projectName = 'mriAGTCAnalysis';
 
 clear protocolParams responseStruct block responseTypes stimulus stimTime performance
