@@ -15,11 +15,28 @@
 
 
 % Save location for the maps
-subjectNames = {'MELA_5001','MELA_5001','MELA_5002','MELA_5002','MELA_5005','HERO_GKA1'};
-analysisIDs = {'60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3','60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6','60db6cf8c1b37b22ee2b6dc9','60c23c1681ba4f28a42a88a8' };
-analysisLabels = {'RightEyeStim','LeftEyeStim','RightEyeStim','LeftEyeStim','LeftEyeStim','RightEyeStim'};
-retinoMapIDs = {'5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380','5dc88aaee74aa3005e169380'  };
-retinoFileNames = {'TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip','TOME_3021_cifti_maps.zip'};
+subjectNames = {...
+    'MELA_5006','MELA_5006',...
+    'MELA_5001','MELA_5001',...
+    'MELA_5002','MELA_5002',...
+    'MELA_5005',...
+    'HERO_GKA1'};
+analysisIDs = {...
+    '60deefe748354d64a8e07913','60deefeb6727937a59dd8e12',...
+    '60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3',...
+    '60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6',...
+    '60db6cf8c1b37b22ee2b6dc9',...
+    '60c23c1681ba4f28a42a88a8' };
+analysisLabels = {...
+    'RightEyeStim','LeftEyeStim',...
+    'RightEyeStim','LeftEyeStim',...
+    'RightEyeStim','LeftEyeStim',...
+    'RightEyeStim',...
+    'RightEyeStim'};
+
+retinoMapID = '5dc88aaee74aa3005e169380';
+retinoFileName = 'TOME_3021_cifti_maps.zip';
+
 fieldNameBaseline = 'baseline';
 fieldNames = {'LminusM','LMS','S','omni','baseline','attention'};
 
@@ -37,7 +54,7 @@ end
 fw = flywheel.Flywheel(getpref('forwardModelWrapper','flywheelAPIKey'));
 
 % Loop over subjects
-for ss = 1: length(subjectNames)
+for ss = 1:length(subjectNames)
     
     % Set up the paths for this subject
     fileStem = [subjectNames{ss} '_agtcOL_'];
@@ -45,9 +62,9 @@ for ss = 1: length(subjectNames)
     mkdir(resultsSaveDir);
     
     % Download and unzip the retino maps
-    fileName = retinoFileNames{ss};
+    fileName = retinoFileName;
     tmpPath = fullfile(saveDir,fileName);
-    fw.downloadOutputFromAnalysis(retinoMapIDs{ss},fileName,tmpPath);
+    fw.downloadOutputFromAnalysis(retinoMapID,fileName,tmpPath);
     command = ['unzip -q -n ' tmpPath ' -d ' saveDir];
     system(command);
     
@@ -84,7 +101,7 @@ for ss = 1: length(subjectNames)
     clear templateImage
     load(tmpPath,'templateImage')
     %        delete(tmpPath)
-        
+    
     % Obtain the results vs. the baseline condition
     saveFieldNames = {};
     for ff = 1:length(fieldNames)
@@ -92,10 +109,10 @@ for ss = 1: length(subjectNames)
             continue
         end
         saveFieldNames{ff} = [fieldNames{ff} '_zVal'];
-        results.(saveFieldNames{ff}) = (results.(fieldNames{ff})-results.(fieldNameBaseline)) ./ ...
-        results.fVal;
+        results.(saveFieldNames{ff}) = (results.(fieldNames{ff})-results.(fieldNameBaseline));% ./ ...
+%            results.fVal;
     end
-
+    
     saveFieldNames = [saveFieldNames 'R2'];
     
     % Save the map results into images
@@ -110,10 +127,10 @@ for ss = 1: length(subjectNames)
         outData.diminfo{1,2}.length = 1;
         cifti_write(outData, outCIFTIFile)
     end
-
+    
     % The vertices to plot
     goodIdx = logical((results.R2 > 0.05).*(eccenMap>0.05).*(vArea==1));
-
+    
     % Left and right hemisphere
     polarMap(32492:end)=-polarMap(32492:end);
     
