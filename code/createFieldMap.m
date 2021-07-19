@@ -1,5 +1,14 @@
 function fieldMap = createFieldMap(vals,polarVals,eccenVals,sigmaVals,rangeVals)
 
+if isempty(vals)
+    caxis(rangeVals)
+    myColorMap
+    colorbar('Location','south')
+    box off
+    axis off
+    return
+end
+
 eccenMax = 45;
 mapRes = 100;
 
@@ -26,7 +35,6 @@ r = sqrt(R.^2+C.^2);
 fieldMap(r>eccenMax)=nan;
 
 imagesc(fieldMap,'AlphaData',~isnan(fieldMap))
-set(gca,'Color',[0.75 0.75 0.75])
 axis square
 xticks(0:mapRes/4:mapRes)
 xlim([0 mapRes]);
@@ -36,6 +44,8 @@ yticks(0:mapRes/4:mapRes)
 yticklabels(cellfun(@(x) num2str(x),num2cell(-eccenMax:eccenMax/2:eccenMax),'UniformOutput',false))
 caxis(rangeVals)
 myColorMap
+set(gcf,'Color',[1 1 1]); set(gca,'Color',[.8 .8 .8]); set(gcf,'InvertHardCopy','off');
+%set(gca,'Color',[0.75 0.75 0.75])
 
 end
 
