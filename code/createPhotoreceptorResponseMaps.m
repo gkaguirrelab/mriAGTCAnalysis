@@ -118,8 +118,7 @@ for ss = 1:length(subjectNames)
             continue
         end
         saveFieldNames{ff} = [fieldNames{ff} '_zVal'];
-        results.(saveFieldNames{ff}) = (results.(fieldNames{ff})-results.(fieldNameBaseline)) ./ ...
-            results.fVal;
+        results.(saveFieldNames{ff}) = results.(fieldNames{ff})-results.(fieldNameBaseline);
     end
     
     saveFieldNames = [saveFieldNames 'R2'];
@@ -148,11 +147,15 @@ for ss = 1:length(subjectNames)
         subplot(3,3,ff);
         % The vertices to plot
         if ff<=4
-            goodIdx = logical((results.R2 > 0.1).*(eccenMap>0.1).*(vArea==1));
+            goodIdx = logical((results.attention > 1).*(results.R2 > 0.1).*(eccenMap>0.1).*(vArea==1));
+            vals = results.(saveFieldNames{plotSet(ff)})(goodIdx) ./ results.attention(goodIdx);
+            range = [-0.1 0.1];
         else
             goodIdx = logical((results.R2 > 0.00).*(eccenMap>0.1).*(vArea==1));
+            vals = results.(saveFieldNames{plotSet(ff)})(goodIdx);
+            range = [-1 1];
         end
-        createFieldMap(results.(saveFieldNames{plotSet(ff)})(goodIdx),polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),[-1 1]);
+        createFieldMap(vals,polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),range);
         title(saveFieldNames{plotSet(ff)},'Interpreter', 'none');
     end
     subplot(3,3,length(plotSet)+2);

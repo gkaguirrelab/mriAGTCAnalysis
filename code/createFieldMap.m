@@ -44,8 +44,7 @@ yticks(0:mapRes/4:mapRes)
 yticklabels(cellfun(@(x) num2str(x),num2cell(-eccenMax:eccenMax/2:eccenMax),'UniformOutput',false))
 caxis(rangeVals)
 myColorMap
-set(gcf,'Color',[1 1 1]); set(gca,'Color',[.8 .8 .8]); set(gcf,'InvertHardCopy','off');
-%set(gca,'Color',[0.75 0.75 0.75])
+set(gcf,'Color',[1 1 1]); set(gca,'Color',[0.1 0.1 0.1]); set(gcf,'InvertHardCopy','off');
 
 end
 
