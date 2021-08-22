@@ -1,5 +1,5 @@
 %{
-save('/Users/aguirre/Desktop/MELA_5006_LeftEyeStim_stim.mat','stimulus','stimTime')
+    save('/Users/aguirre/Desktop/MELA_5006_LeftEyeStim_stim.mat','stimulus','stimTime')
 %}
 
 projectName = 'mriAGTCAnalysis';
