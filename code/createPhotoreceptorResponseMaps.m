@@ -16,44 +16,34 @@
 
 % Save location for the maps
 subjectNames = {...
-    'MELA_5004','MELA_5004',...
-    'MELA_5010','MELA_5010',...
-    'MELA_5009','MELA_5009',...
-    'MELA_5008','MELA_5008',...
-    'MELA_5007','MELA_5007',...
-    'MELA_5006','MELA_5006',...
-    'MELA_5001','MELA_5001',...
-    'MELA_5002','MELA_5002',...
-    'MELA_5005','MELA_5005',...,
-    'HERO_GKA1'};
+    'MELA_5001',...
+    'MELA_5002',...
+    'MELA_5004',...
+    'MELA_5005',...
+    'MELA_5006',...
+    'MELA_5007',...
+    'MELA_5008',...
+    'MELA_5009',...
+    'MELA_5010'};
 analysisIDs = {...
-    '60fc8ee91d0da96a50dd8ec9','60fc8ede32d34cfe5ce07630',...
-    '60faa6844a153559b9dd9155','60faa654f0ef61900396c880',...
-    '60f40daea5405aab2156ad52','60f40da99fed514b76dd8f8a',...
-    '60f2b39592808809a556b037','60f2b3909a93f718cadd9005',...
-    '60eebf73d06c186a1de073fd','60eebf63a2560bbf7596c724',...
-    '60deefe748354d64a8e07913','60deefeb6727937a59dd8e12',...
-    '60c23c071dc0f01275982182','60c23c0122a03af03c43f4e3',...
-    '60c23bfed8d2fe65073d0684','60c23bf9927feec9c02a88e6',...
-    '60db6cf8c1b37b22ee2b6dc9','611c17fea2eccf0ba5a2db70',...
-    '60c23c1681ba4f28a42a88a8' };
-analysisLabels = {...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim','LeftEyeStim',...
-    'RightEyeStim'};
+    '6122d039f52d4265b309baa4',...
+    '6122d03e191bd692cfc9e6fb',...
+    '6122d045369c87580c38cf99',...
+    '6122d04fada5a85d7af68a5e',...
+    '6122d0548fb7cc95c6c70911',...
+    '6122d05bd7113cbf3a09baaf',...
+    '6122d061f78eca5102c9e70a',...
+    '6122d067369c87580c38cf9f',...
+    '6122d06cada5a85d7af68a64',...
+     };
 
 retinoMapID = '5dc88aaee74aa3005e169380';
 retinoFileName = 'TOME_3021_cifti_maps.zip';
 
 fieldNameBaseline = 'baseline';
 fieldNames = {'LminusM','LMS','S','omni','baseline','attention'};
+baselineIdx = find(strcmp(fieldNames,fieldNameBaseline));
+notBaselineIdx = find(~strcmp(fieldNames,fieldNameBaseline));
 
 % Analysis parameters
 %scratchSaveDir = getpref('flywheelMRSupport','flywheelScratchDir');
@@ -97,6 +87,9 @@ for ss = 1:length(subjectNames)
     sigmaMap = cifti_read(tmpPath);
     sigmaMap = sigmaMap.cdata;
     
+    % Flip the polar map sign to create a Left and right hemifield
+    polarMap(32492:end)=-polarMap(32492:end);
+
     % Download the results file
     fileName = [fileStem 'results.mat'];
     tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
@@ -105,47 +98,70 @@ for ss = 1:length(subjectNames)
     % Load the result file into memory and delete the downloaded file
     clear results
     load(tmpPath,'results')
-    %        delete(tmpPath)
-    
-    % Download the templateImage file
-    fileName = [fileStem 'templateImage.mat'];
-    tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
-    fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
-    
-    % Load the result file into memory and delete the downloaded file
-    clear templateImage
-    load(tmpPath,'templateImage')
+
+    % Grab the stimLabels
+    stimLabels = results.model.opts{find(strcmp(results.model.opts,'stimLabels'))+1};
+
+%     % Download the templateImage file
+%     fileName = [fileStem 'templateImage.mat'];
+%     tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
+%     fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
+%     
+%     % Load the result file into memory and delete the downloaded file
+%     clear templateImage
+%     load(tmpPath,'templateImage')
     %        delete(tmpPath)
     
     % Obtain the results vs. the baseline condition
-    saveFieldNames = {};
-    for ff = 1:length(fieldNames)
+    
+    for ff = 1:length(notBaselineIdx)
+            subString = sprintf(['f%dHz_' directions{dd}],freqs(ff));
+            idx = find(contains(stimLabels,subString));
+            vals{ff} = mean(results.params(goodIdx,idx),'omitnan');
+
+            
         if strcmp(fieldNames{ff},fieldNameBaseline)
             continue
         end
         saveFieldNames{ff} = [fieldNames{ff} '_zVal'];
         results.(saveFieldNames{ff}) = results.(fieldNames{ff})-results.(fieldNameBaseline);
     end
+%     
+%     saveFieldNames = [saveFieldNames 'R2'];
+%     
+%     % Save the map results into images
+%     for ff = 1:length(saveFieldNames)
+%         if isempty(saveFieldNames{ff})
+%             continue
+%         end
+%         % The initial, CIFTI space image
+%         outCIFTIFile = fullfile(resultsSaveDir, [subjectNames{ss} '_' analysisLabels{ss} '_' saveFieldNames{ff} '.dtseries.nii']);
+%         outData = templateImage;
+%         outData.cdata = single(results.(saveFieldNames{ff}));
+%         outData.diminfo{1,2}.length = 1;
+%         cifti_write(outData, outCIFTIFile)
+%     end
+%     
     
-    saveFieldNames = [saveFieldNames 'R2'];
-    
-    % Save the map results into images
-    for ff = 1:length(saveFieldNames)
-        if isempty(saveFieldNames{ff})
-            continue
+    % Find the vertices for this wedge of the visual field
+    eccenRange = [0 90];
+    r2Thresh = 0.2;
+    areaIdx = (vArea==1) .* (eccenMap > eccenRange(1)) .* (eccenMap < eccenRange(2));
+    goodIdx = logical( (results.R2 > r2Thresh) .* areaIdx );
+        
+   % Loop through the stimuli and obtain the set of values
+        vals = cell(1,nFreqs);
+        for ff = 1:nFreqs
         end
-        % The initial, CIFTI space image
-        outCIFTIFile = fullfile(resultsSaveDir, [subjectNames{ss} '_' analysisLabels{ss} '_' saveFieldNames{ff} '.dtseries.nii']);
-        outData = templateImage;
-        outData.cdata = single(results.(saveFieldNames{ff}));
-        outData.diminfo{1,2}.length = 1;
-        cifti_write(outData, outCIFTIFile)
-    end
-    
-    
-    % Left and right hemisphere
-    polarMap(32492:end)=-polarMap(32492:end);
-    
+
+                % Adjust the values for the zero frequency and plot
+        for ff = 2:nFreqs
+            data{ss,dd,ff-1} = vals{ff}-vals{1};
+            semilogx(zeros(1,length(data{ss,dd,ff-1}))+freqs(ff),data{ss,dd,ff-1},'.','Color',[0.5 0.5 0.5]);
+            hold on
+        end
+
+        
     % generate visual field map
     figHandle = figure( 'Position',  [100, 100, 800, 300],'PaperOrientation','landscape');
     plotSet = [1 2 3 4 6 7];
