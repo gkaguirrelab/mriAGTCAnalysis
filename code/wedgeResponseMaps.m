@@ -14,9 +14,11 @@
 %}
 
 
+% Analysis properties
 eccenRangeSet = [0, 1.25, 2.5, 5, 10, 20];
 polarRangeSet = [{[-180 180]},repmat({-180:60:180},1,length(eccenRangeSet)-1)];
-responseMax = 2.0;
+responseMax = 4.0;
+r2Thresh = 0.1;
 
 
 % Save location for the maps
@@ -29,7 +31,8 @@ subjectNames = {...
     'MELA_5007',...
     'MELA_5008',...
     'MELA_5009',...
-    'MELA_5010'};
+    'MELA_5010',...
+    'MELA_5011'};
 analysisIDs = {...
     '6122d039f52d4265b309baa4',...
     '6122d03e191bd692cfc9e6fb',...
@@ -40,6 +43,7 @@ analysisIDs = {...
     '6122d061f78eca5102c9e70a',...
     '6122d067369c87580c38cf9f',...
     '6122d06cada5a85d7af68a64',...
+    '6128e53240a1c15af409ba86',...
     };
 
 retinoMapID = '5dc88aaee74aa3005e169380';
@@ -107,25 +111,10 @@ for ss = 1:length(subjectNames)
     
     % Grab the stimLabels
     stimLabels = results.model.opts{find(strcmp(results.model.opts,'stimLabels'))+1};
-    
-    % Get the goodIdx
-    eccenRange = [0 10];
-    r2Thresh = 0.1;
-    
-    %     % Download the templateImage file
-    %     fileName = [fileStem 'templateImage.mat'];
-    %     tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
-    %     fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
-    %
-    %     % Load the result file into memory and delete the downloaded file
-    %     clear templateImage
-    %     load(tmpPath,'templateImage')
-    %        delete(tmpPath)
-    
+
     % Obtain the results vs. the baseline condition for each condition in
-    % each wedge
-    
-    figure('Name',subjectNames{ss});
+    % each wedge    
+    figure('Name',subjectNames{ss},'Position',[384     1   332   946]);
     cmap = myColorMap();
     for ee = 1:length(eccenRangeSet)-1
         eccenRange = [eccenRangeSet(ee) eccenRangeSet(ee+1)];
@@ -147,9 +136,9 @@ for ss = 1:length(subjectNames)
                 idxBase = find(startsWith(stimLabels,[fieldNameBaseline,'_L'])); % 
                 valsL{ff} = mean(results.params(goodIdx,idxVals)-results.params(goodIdx,idxBase),'omitnan');
 
-                % Add this plot wedge
-                subplot(2,3,ff);
-                [~,~,~,thisVal] = ttest2(valsR{ff},valsL{ff});
+                % Add the plot wedge for the left eye
+                subplot(6,2,ff*2-1);
+                [~,~,~,thisVal] = ttest(valsL{ff});
                 thisVal = thisVal.tstat;
                 if isnan(thisVal)
                     cIdx = 1;
@@ -157,23 +146,47 @@ for ss = 1:length(subjectNames)
                 cIdx = round(128 + 128*thisVal/responseMax);
                 cIdx = max([2 cIdx]);
                 cIdx = min([256 cIdx]);
+                end                               
+                addRadialPatch(polarRange,eccenRange,cmap(cIdx,:));
+                if ee==1
+                    hold on
+                    axis off                    
+                    set(get(gca,'YLabel'),'visible','on')
+                    ylabel(fieldNames{notBaselineIdx(ff)});
+                    title('Left eye stim');
+                    axis square
                 end
+                
+                            % Add the plot wedge for the right eye
+                subplot(6,2,ff*2);
+                [~,~,~,thisVal] = ttest(valsR{ff});
+                thisVal = thisVal.tstat;
+                if isnan(thisVal)
+                    cIdx = 1;
+                else
+                cIdx = round(128 + 128*thisVal/responseMax);
+                cIdx = max([2 cIdx]);
+                cIdx = min([256 cIdx]);
+                end                               
                 addRadialPatch(polarRange,eccenRange,cmap(cIdx,:));
                 if ee==1
                     hold on
                     axis off
-                    title(fieldNames{notBaselineIdx(ff)});
                     axis square
+                    title('RIght eye stim');
                 end
+                
             end
         end
     end
-    subplot(2,3,6)
-    axis square
-    axis off
+    
+    % Add the color bar
+    subplot(6,2,11:12)
     colormap(cmap)
-    colorbar('Ticks',0:0.25:1,...
-        'TickLabels',{'-1','-0.5','0','+0.5','+1'})
+    c = colorbar('south','Ticks',0:0.25:1,...
+        'TickLabels',{sprintf('-%d',responseMax),'','0','',sprintf('+%d',responseMax)})
+    c.Label.String = 't-value';
+    axis off
     
     foo=1;
     %
@@ -200,6 +213,10 @@ end
 function p = addRadialPatch(polarRange,eccenRange,color)
 
 nDivs = 100;
+
+% Convert eccentricity to log eccentricity
+eccenRange = log10(eccenRange);
+eccenRange(isinf(eccenRange))=0;
 
 theta = pi/2 + deg2rad(linspace(polarRange(1),polarRange(2),nDivs));
 theta = [theta fliplr(theta)];
