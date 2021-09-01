@@ -114,7 +114,7 @@ for ss = 1:length(subjectNames)
 
     % Obtain the results vs. the baseline condition for each condition in
     % each wedge    
-    figure('Name',subjectNames{ss},'Position',[384     1   332   946]);
+    figure('Name',subjectNames{ss},'Position',[384     1   332   946],'Renderer','Painters');
     cmap = myColorMap();
     for ee = 1:length(eccenRangeSet)-1
         eccenRange = [eccenRangeSet(ee) eccenRangeSet(ee+1)];
