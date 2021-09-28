@@ -17,7 +17,7 @@ if not os.path.exists(workdir):
     os.system('mkdir -p %s' % workdir)
 
 # Initialize Flywheel 
-fw = flywheel.Client('upenn.flywheel.io:8P7zdNhXBWiahwEGKt')
+fw = flywheel.Client()
 
 # Get flywheel subject, session
 proj = fw.projects.find_first('label=AGTC')
