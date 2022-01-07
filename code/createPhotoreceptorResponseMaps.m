@@ -1,17 +1,19 @@
-% Script that downloads the forwardModel results from the Mt Sinai flicker
-% frequency experiments, and then fits a difference-of-exponentials model
-% to the data. The resulting fits are saved back as maps.
-
-% To find the analysis IDs, get the ID for the session (which is in the URL
-% of the web GUI, and then use this command to get a list of the analyses
-% associated with that session, and then find the analysis ID the we want.
+% Script that downloads the forwardModel results from AGTC OneLight
+% experiments.
 %
-%{
-    toolboxName = 'flywheelMRSupport';
-    fw = flywheel.Flywheel(getpref(toolboxName,'flywheelAPIKey'));
-    sessionID = '5a1fa4b33b71e50019fd55dd';
-    analysisList = fw.getSessionAnalyses(sessionID);
-%}
+% The basic design of the experiment presents a set of modulations that
+% target different post-receptoral directions repeatedly. There 5 stimulus
+% conditions, each a 12 second flicker modulation (baseline, LMS, L-M, S,
+% and "omni"). These are presented in a counter-balanced order during scan
+% "A", and then in the reverse order in scan "B". There is also a randomly
+% occuring attention task. The forwardModel analysis of these data
+% concatenates all runs (left and right eye), and identifies the HRF shape
+% that best accounts for the data. The amplitude of response to each
+% stimulus type in each acquisition is retained.
+%
+% The analysis IDs are stored in the first entry in the "notes" tab for
+% each forward model.
+%
 
 
 % Save location for the maps
@@ -25,6 +27,16 @@ subjectNames = {...
     'MELA_5008',...
     'MELA_5009',...
     'MELA_5010'};
+sessionTypes = {...
+    'post',...
+    'post',...
+    'control',...
+    'control',...
+    'pre',...
+    'control',...
+    'post',...
+    'control',...
+    'pre'};
 analysisIDs = {...
     '6122d039f52d4265b309baa4',...
     '6122d03e191bd692cfc9e6fb',...
@@ -35,19 +47,19 @@ analysisIDs = {...
     '6122d061f78eca5102c9e70a',...
     '6122d067369c87580c38cf9f',...
     '6122d06cada5a85d7af68a64',...
-     };
+    };
 
 retinoMapID = '5dc88aaee74aa3005e169380';
 retinoFileName = 'TOME_3021_cifti_maps.zip';
 
 fieldNameBaseline = 'baseline';
-fieldNames = {'LminusM','LMS','S','omni','baseline','attention'};
-baselineIdx = find(strcmp(fieldNames,fieldNameBaseline));
-notBaselineIdx = find(~strcmp(fieldNames,fieldNameBaseline));
+directionNames = {'LminusM','LMS','S','omni','baseline','attention'};
+baselineIdx = find(strcmp(directionNames,fieldNameBaseline));
+notBaselineIdx = find(~strcmp(directionNames,fieldNameBaseline));
 
-% Analysis parameters
-%scratchSaveDir = getpref('flywheelMRSupport','flywheelScratchDir');
+% File save locations
 scratchSaveDir = '/Users/aguirre/Desktop/tempFiles';
+resultsSaveDir = '/Users/aguirre/Desktop/AGTC_OL/';
 
 % Create the functional tmp save dir if it does not exist
 saveDir = fullfile(scratchSaveDir,'v0','output');
@@ -58,43 +70,43 @@ end
 % Create a flywheel object
 fw = flywheel.Flywheel(getpref('forwardModelWrapper','flywheelAPIKey'));
 
+% Download the standard retino data
+fileName = retinoFileName;
+tmpPath = fullfile(saveDir,fileName);
+fw.downloadOutputFromAnalysis(retinoMapID,fileName,tmpPath);
+command = ['unzip -q -n ' tmpPath ' -d ' saveDir];
+system(command);
+
+% Load the retino maps
+tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_varea.dtseries.nii'));
+vArea = cifti_read(tmpPath);
+vArea = vArea.cdata;
+tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_eccen.dtseries.nii'));
+eccenMap = cifti_read(tmpPath);
+eccenMap = eccenMap.cdata;
+tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_angle.dtseries.nii'));
+polarMap = cifti_read(tmpPath);
+polarMap = polarMap.cdata;
+tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_sigma.dtseries.nii'));
+sigmaMap = cifti_read(tmpPath);
+sigmaMap = sigmaMap.cdata;
+
+% Flip the polar map sign to create a Left and right hemifield
+polarMap(32492:end)=-polarMap(32492:end);
+
+
 % Loop over subjects
 for ss = 1:length(subjectNames)
-    
+
     % Set up the paths for this subject
-    fileStem = [subjectNames{ss} '_agtcOL_'];
-    resultsSaveDir = ['/Users/aguirre/Desktop/AGTC_OL/' subjectNames{ss}];
-    mkdir(resultsSaveDir);
-    
-    % Download and unzip the retino maps
-    fileName = retinoFileName;
-    tmpPath = fullfile(saveDir,fileName);
-    fw.downloadOutputFromAnalysis(retinoMapID,fileName,tmpPath);
-    command = ['unzip -q -n ' tmpPath ' -d ' saveDir];
-    system(command);
-    
-    % Load the retino maps
-    tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_varea.dtseries.nii'));
-    vArea = cifti_read(tmpPath);
-    vArea = vArea.cdata;
-    tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_eccen.dtseries.nii'));
-    eccenMap = cifti_read(tmpPath);
-    eccenMap = eccenMap.cdata;
-    tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_angle.dtseries.nii'));
-    polarMap = cifti_read(tmpPath);
-    polarMap = polarMap.cdata;
-    tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_sigma.dtseries.nii'));
-    sigmaMap = cifti_read(tmpPath);
-    sigmaMap = sigmaMap.cdata;
-    
-    % Flip the polar map sign to create a Left and right hemifield
-    polarMap(32492:end)=-polarMap(32492:end);
+    newDir = fullfile(resultsSaveDir,subjectNames{ss});
+    mkdir(newDir);
 
     % Download the results file
-    fileName = [fileStem 'results.mat'];
-    tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
+    fileName = [subjectNames{ss} '_mtSinai_results.mat'];
+    tmpPath = fullfile(saveDir,fileName);
     fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
-    
+
     % Load the result file into memory and delete the downloaded file
     clear results
     load(tmpPath,'results')
@@ -102,66 +114,24 @@ for ss = 1:length(subjectNames)
     % Grab the stimLabels
     stimLabels = results.model.opts{find(strcmp(results.model.opts,'stimLabels'))+1};
 
-%     % Download the templateImage file
-%     fileName = [fileStem 'templateImage.mat'];
-%     tmpPath = fullfile(saveDir,[analysisLabels{ss} '_' fileName]);
-%     fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
-%     
-%     % Load the result file into memory and delete the downloaded file
-%     clear templateImage
-%     load(tmpPath,'templateImage')
-    %        delete(tmpPath)
-    
-    % Obtain the results vs. the baseline condition
-    
-    for ff = 1:length(notBaselineIdx)
-            subString = sprintf(['f%dHz_' directions{dd}],freqs(ff));
-            idx = find(contains(stimLabels,subString));
-            vals{ff} = mean(results.params(goodIdx,idx),'omitnan');
+    % Identify the baseline indices
+    baseIdx = find(contains(stimLabels,directionNames(baselineIdx)));
 
-            
-        if strcmp(fieldNames{ff},fieldNameBaseline)
-            continue
-        end
-        saveFieldNames{ff} = [fieldNames{ff} '_zVal'];
-        results.(saveFieldNames{ff}) = results.(fieldNames{ff})-results.(fieldNameBaseline);
+    % Obtain the results vs. the baseline condition
+    nAcqs = length(stimLabels)/length(directionNames);
+    for dd = 1:length(notBaselineIdx)
+        stimIdx = find(contains(stimLabels,directionNames(notBaselineIdx(dd))));
+        vals = mean(results.params(:,stimIdx),2,'omitnan') - mean(results.params(:,baseIdx),2,'omitnan');
+        saveFieldName = [directionNames{ff} '_vBase'];
+        results.(saveFieldName) = vals;
     end
-%     
-%     saveFieldNames = [saveFieldNames 'R2'];
-%     
-%     % Save the map results into images
-%     for ff = 1:length(saveFieldNames)
-%         if isempty(saveFieldNames{ff})
-%             continue
-%         end
-%         % The initial, CIFTI space image
-%         outCIFTIFile = fullfile(resultsSaveDir, [subjectNames{ss} '_' analysisLabels{ss} '_' saveFieldNames{ff} '.dtseries.nii']);
-%         outData = templateImage;
-%         outData.cdata = single(results.(saveFieldNames{ff}));
-%         outData.diminfo{1,2}.length = 1;
-%         cifti_write(outData, outCIFTIFile)
-%     end
-%     
-    
+
     % Find the vertices for this wedge of the visual field
     eccenRange = [0 90];
     r2Thresh = 0.2;
     areaIdx = (vArea==1) .* (eccenMap > eccenRange(1)) .* (eccenMap < eccenRange(2));
     goodIdx = logical( (results.R2 > r2Thresh) .* areaIdx );
-        
-   % Loop through the stimuli and obtain the set of values
-        vals = cell(1,nFreqs);
-        for ff = 1:nFreqs
-        end
 
-                % Adjust the values for the zero frequency and plot
-        for ff = 2:nFreqs
-            data{ss,dd,ff-1} = vals{ff}-vals{1};
-            semilogx(zeros(1,length(data{ss,dd,ff-1}))+freqs(ff),data{ss,dd,ff-1},'.','Color',[0.5 0.5 0.5]);
-            hold on
-        end
-
-        
     % generate visual field map
     figHandle = figure( 'Position',  [100, 100, 800, 300],'PaperOrientation','landscape');
     plotSet = [1 2 3 4 6 7];
@@ -177,16 +147,16 @@ for ss = 1:length(subjectNames)
             vals = results.(saveFieldNames{plotSet(ff)})(goodIdx);
             range = [-1 1];
         end
-        createFieldMap(vals,polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),range);
+        createFieldMap(vals(goodIdx),polarMap(goodIdx),eccenMap(goodIdx),sigmaMap(goodIdx),[-3 3]);
         title(saveFieldNames{plotSet(ff)},'Interpreter', 'none');
     end
     subplot(3,3,length(plotSet)+2);
     createFieldMap([],[],[],[],[-1 1]);
     sgtitle([subjectNames{ss} '_' analysisLabels{ss}],'Interpreter', 'none');
-    outFigureFile = fullfile(resultsSaveDir, [subjectNames{ss} '_' analysisLabels{ss} '_FieldMap.pdf']);
+    outFigureFile = fullfile(newDir, [subjectNames{ss} '_' analysisLabels{ss} '_FieldMap.pdf']);
     print(figHandle,outFigureFile,'-dpdf','-fillpage');
     close(figHandle);
-    
+
 end
 
 

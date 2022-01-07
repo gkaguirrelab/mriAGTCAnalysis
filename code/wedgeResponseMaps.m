@@ -35,6 +35,11 @@ subjectNames = {...
     'MELA_5011',...
     'MELA_5012',...
     'MELA_5013',...
+    'MELA_5006',...
+    'MELA_5014',...
+    'MELA_5011',...
+    'MELA_5015',...
+    'MELA_5016',...
     };
 analysisIDs = {...
     '6122d039f52d4265b309baa4',...
@@ -49,6 +54,11 @@ analysisIDs = {...
     '6128e53240a1c15af409ba86',...
     '613024631ee13ef2fbe439dd',...
     '6164385351b7191457eb3e0f',...
+    '61d5ec61256a44be592afa5a',...
+    '61d5df72d6684bb269a43802',...
+    '61d5df6db535ac2e2c91884c',...
+    '61d5df6948e4d6358b2d11e1',...
+    '61d5df6588e97b273ae957c9',...
     };
 
 retinoMapID = '5dc88aaee74aa3005e169380';
@@ -75,19 +85,19 @@ fw = flywheel.Flywheel(getpref('forwardModelWrapper','flywheelAPIKey'));
 
 % Loop over subjects
 for ss = 1:length(subjectNames)
-    
+
     % Set up the paths for this subject
     fileStem = [subjectNames{ss} '_mtSinai_'];
     resultsSaveDir = ['/Users/aguirre/Desktop/AGTC_OL/' subjectNames{ss}];
     mkdir(resultsSaveDir);
-    
+
     % Download and unzip the retino maps
     fileName = retinoFileName;
     tmpPath = fullfile(saveDir,fileName);
     fw.downloadOutputFromAnalysis(retinoMapID,fileName,tmpPath);
     command = ['unzip -q -n ' tmpPath ' -d ' saveDir];
     system(command);
-    
+
     % Load the retino maps
     tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_varea.dtseries.nii'));
     vArea = cifti_read(tmpPath);
@@ -101,24 +111,24 @@ for ss = 1:length(subjectNames)
     tmpPath = fullfile(saveDir,strrep(fileName,'_cifti_maps.zip','_inferred_sigma.dtseries.nii'));
     sigmaMap = cifti_read(tmpPath);
     sigmaMap = sigmaMap.cdata;
-    
+
     % Flip the polar map sign to create a left and right hemifield
     polarMap(32492:end)=-polarMap(32492:end);
-    
+
     % Download the results file
     fileName = [fileStem 'results.mat'];
     tmpPath = fullfile(saveDir,fileName);
     fw.downloadOutputFromAnalysis(analysisIDs{ss},fileName,tmpPath);
-    
+
     % Load the result file into memory and delete the downloaded file
     clear results
     load(tmpPath,'results')
-    
+
     % Grab the stimLabels
     stimLabels = results.model.opts{find(strcmp(results.model.opts,'stimLabels'))+1};
 
     % Obtain the results vs. the baseline condition for each condition in
-    % each wedge    
+    % each wedge
     figure('Name',subjectNames{ss},'Position',[384     1   332   946],'Renderer','Painters');
     cmap = myColorMap();
     for ee = 1:length(eccenRangeSet)-1
@@ -131,14 +141,14 @@ for ss = 1:length(subjectNames)
             areaIdx = (vArea==1) .* (eccenMap > eccenRange(1)) .* (eccenMap < eccenRange(2)) .* (polarMap > polarRange(1)) .* (polarMap < polarRange(2)) ;
             goodIdx = logical( (results.R2 > r2Thresh) .* areaIdx );
             for ff = 1:length(notBaselineIdx)
-                subString = [fieldNames{notBaselineIdx(ff)},'_R']; % 
+                subString = [fieldNames{notBaselineIdx(ff)},'_R']; %
                 idxVals = find(startsWith(stimLabels,subString));
-                idxBase = find(startsWith(stimLabels,[fieldNameBaseline,'_R'])); % 
+                idxBase = find(startsWith(stimLabels,[fieldNameBaseline,'_R'])); %
                 valsR{ff} = mean(results.params(goodIdx,idxVals)-results.params(goodIdx,idxBase),'omitnan');
 
-                subString = [fieldNames{notBaselineIdx(ff)},'_L']; % 
+                subString = [fieldNames{notBaselineIdx(ff)},'_L']; %
                 idxVals = find(startsWith(stimLabels,subString));
-                idxBase = find(startsWith(stimLabels,[fieldNameBaseline,'_L'])); % 
+                idxBase = find(startsWith(stimLabels,[fieldNameBaseline,'_L'])); %
                 valsL{ff} = mean(results.params(goodIdx,idxVals)-results.params(goodIdx,idxBase),'omitnan');
 
                 % Add the plot wedge for the left eye
@@ -148,51 +158,51 @@ for ss = 1:length(subjectNames)
                 if isnan(thisVal)
                     cIdx = 1;
                 else
-                cIdx = round(128 + 128*thisVal/responseMax);
-                cIdx = max([2 cIdx]);
-                cIdx = min([256 cIdx]);
-                end                               
+                    cIdx = round(128 + 128*thisVal/responseMax);
+                    cIdx = max([2 cIdx]);
+                    cIdx = min([256 cIdx]);
+                end
                 addRadialPatch(polarRange,eccenRange,cmap(cIdx,:));
                 if ee==1
                     hold on
-                    axis off                    
+                    axis off
                     set(get(gca,'YLabel'),'visible','on')
                     ylabel(fieldNames{notBaselineIdx(ff)});
                     title('Left eye stim');
                     axis square
                 end
-                
-                            % Add the plot wedge for the right eye
+
+                % Add the plot wedge for the right eye
                 subplot(6,2,ff*2);
                 [~,~,~,thisVal] = ttest(valsR{ff});
                 thisVal = thisVal.tstat;
                 if isnan(thisVal)
                     cIdx = 1;
                 else
-                cIdx = round(128 + 128*thisVal/responseMax);
-                cIdx = max([2 cIdx]);
-                cIdx = min([256 cIdx]);
-                end                               
+                    cIdx = round(128 + 128*thisVal/responseMax);
+                    cIdx = max([2 cIdx]);
+                    cIdx = min([256 cIdx]);
+                end
                 addRadialPatch(polarRange,eccenRange,cmap(cIdx,:));
                 if ee==1
                     hold on
                     axis off
                     axis square
-                    title('RIght eye stim');
+                    title('Right eye stim');
                 end
-                
+
             end
         end
     end
-    
+
     % Add the color bar
     subplot(6,2,11:12)
     colormap(cmap)
     c = colorbar('south','Ticks',0:0.25:1,...
-        'TickLabels',{sprintf('-%d',responseMax),'','0','',sprintf('+%d',responseMax)})
+        'TickLabels',{sprintf('-%d',responseMax),'','0','',sprintf('+%d',responseMax)});
     c.Label.String = 't-value';
     axis off
-    
+
     foo=1;
     %
     %     saveFieldNames = [saveFieldNames 'R2'];
@@ -210,7 +220,7 @@ for ss = 1:length(subjectNames)
     %         cifti_write(outData, outCIFTIFile)
     %     end
     %
-    
+
 end
 
 
